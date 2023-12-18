@@ -217,7 +217,7 @@ def get_results(date):
         return None
 
 # 2021/03/28の結果ファイルをcsvで取得
-date = '2021-03-26'
+date = '2021-03-25'
 download_file('results', date)
 df = get_results(date)
 display(df.head())
