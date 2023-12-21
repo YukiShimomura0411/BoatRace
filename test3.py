@@ -30,11 +30,12 @@ def download_file(obj, date):
             d = archive.read(archive.infolist()[0].filename)
             with open(f'downloads/{obj}/{ymd}.txt', 'wb') as file:
                 file.write(d)
+            archive = None
             os.remove(f'downloads/{obj}/{ymd}.lzh')
         except urllib.request.HTTPError:
             print(f'There are no data for {date}')
 
-download_file('racelists', '2023-11-16')
+download_file('racelists', '2023-11-22')
 
 
 
