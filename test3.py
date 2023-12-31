@@ -3,6 +3,7 @@ import os
 import subprocess
 import urllib
 import re
+from datetime import date, timedelta
 
 import mojimoji as mojimoji
 import numpy as np
@@ -151,14 +152,22 @@ def get_results(date):
         df['wakunari'] = np.where(waku == '123456', 1, 0)
         df = df.replace({'K': np.nan})
         df.to_csv(f'downloads/results_{date}.csv', index=False, encoding='cp932')
-        return df.astype(get_dtype('results'))
+        return df
     else:
         return None
 
-date = '2023-10-3'
-download_file('results', date)
-read_file('results', date)
-get_results(date)
+def date_range(start, stop, step = timedelta(1)):
+    current = start
+    while current < stop:
+        yield current
+        current += step
+
+for date in date_range(date(2021, 1, 1), date(2021, 12, 31)):
+    dstr = date.strftime("%Y-%m-%d")
+
+download_file('results', dstr)
+read_file('results', dstr)
+get_results(dstr)
 
 
 

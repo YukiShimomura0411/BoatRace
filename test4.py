@@ -9,6 +9,7 @@ import wget
 from Tools.scripts.dutree import display
 from lhafile import LhaFile
 from pandas._testing import get_dtype
+from datetime import date, timedelta
 
 def download_file(obj, date):
     """
@@ -120,12 +121,20 @@ def get_racelists(date):
     if len(stack) > 0:
         df = pd.DataFrame(stack)[cols].dropna()
         df.to_csv(f'downloads/racelists_{date}.csv', index=False, encoding='cp932')
-        return df.astype(get_dtype('racelists'))
+        return df
     else:
         return None
 
-date = '2023-10-3'
-download_file('racelists', date)
-read_file('racelists', date)
-get_racelists(date)
+def date_range(start, stop, step = timedelta(1)):
+    current = start
+    while current < stop:
+        yield current
+        current += step
+
+for date in date_range(date(2021, 1, 1), date(2021, 12, 31)):
+    dstr = date.strftime("%Y-%m-%d")
+
+download_file('racelists', dstr)
+read_file('racelists', dstr)
+get_racelists(dstr)
 
