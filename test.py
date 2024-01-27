@@ -148,10 +148,18 @@ def get_results(date):
     if len(stack) > 0:
         df = pd.DataFrame(stack)[cols].dropna(how='all')
         df['tkt_2t'] = df['tkt_2t'].apply(lambda x: f"'{x}")
+        df['tkt_2f'] = df['tkt_2f'].apply(lambda x: f"'{x}")
+        df['tkt_w1'] = df['tkt_w1'].apply(lambda x: f"'{x}")
+        df['tkt_w2'] = df['tkt_w2'].apply(lambda x: f"'{x}")
+        df['tkt_w3'] = df['tkt_w3'].apply(lambda x: f"'{x}")
         df['tkt_3t'] = df['tkt_3t'].apply(lambda x: f"'{x}")
-        df['win_method'] = df['win_method'].astype('category')
-        df_encoded = pd.get_dummies(df, columns=['win_method'], prefix='win_method')
-        df_encoded = df_encoded.loc[:, ~df_encoded.columns.str.startswith('win_method_False')]
+        df['tkt_3f'] = df['tkt_3f'].apply(lambda x: f"'{x}")
+        df['win_method_逃げ'] = df['win_method'].apply(lambda x: 1 if x == '逃げ' else 0)
+        df['win_method_まくり'] = df['win_method'].apply(lambda x: 1 if x == 'まくり' else 0)
+        df['win_method_まくり差し'] = df['win_method'].apply(lambda x: 1 if x == 'まくり差し' else 0)
+        df['win_method_差し'] = df['win_method'].apply(lambda x: 1 if x == '差し' else 0)
+        df['win_method_抜き'] = df['win_method'].apply(lambda x: 1 if x == '抜き' else 0)
+        df['win_method_恵まれ'] = df['win_method'].apply(lambda x: 1 if x == '恵まれ' else 0)
         repl_mapper = {'K': np.nan, '.': np.nan}
         for i in range(1, 7):
             df[f'ET_{i}'] = df[f'ET_{i}'].replace(repl_mapper)
@@ -162,15 +170,15 @@ def get_results(date):
             [f'SC_{i}' for i in range(1, 7)]].values])
         df['wakunari'] = np.where(waku == '123456', 1, 0)
         df = df.replace({'K': np.nan})
-        df_encoded.to_csv(f'D:/BoatRace/results/results_2020/results_{date}.csv', index=False, encoding='cp932')
-        return df_encoded
+        df.to_csv(f'D:/BoatRace/results/results_2020/results_{date}.csv', index=False, encoding='cp932')
+        return df
     else:
         return None
 
 
 # 開始日と終了日を指定
-start_date = date(2020, 1, 10)
-end_date = date(2020, 1, 10)
+start_date = date(2020, 1, 11)
+end_date = date(2020, 1, 11)
 
 # date_range 関数を使用して日付を生成
 for d in date_range(start_date, end_date):
