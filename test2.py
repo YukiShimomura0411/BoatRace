@@ -126,20 +126,28 @@ def get_racelists(date):
                 continue
     if len(stack) > 0:
         df = pd.DataFrame(stack)[cols].dropna()
-        class_mapping = {'B2': 0, 'B1': 1, 'A2': 2, 'A1': 3}
+        class_mapping = {'B2': 1, 'B1': 2, 'A2': 3, 'A1': 4, '群馬': 1, '埼玉': 2, '東京': 3, '静岡': 4, '愛知': 5, '三重': 6, '福井': 7, '滋賀': 8,
+                         '大阪': 9, '兵庫': 10, '岡山': 11, '広島': 12, '山口': 13, '徳島': 14, '香川': 15,
+                         '福岡': 16, '佐賀': 17, '長崎': 18}
         df['class_no_1'] = df['class_1'].map(class_mapping)
         df['class_no_2'] = df['class_2'].map(class_mapping)
         df['class_no_3'] = df['class_3'].map(class_mapping)
         df['class_no_4'] = df['class_4'].map(class_mapping)
         df['class_no_5'] = df['class_5'].map(class_mapping)
         df['class_no_6'] = df['class_6'].map(class_mapping)
+        df['area_no_1'] = df['area_1'].map(class_mapping)
+        df['area_no_2'] = df['area_2'].map(class_mapping)
+        df['area_no_3'] = df['area_3'].map(class_mapping)
+        df['area_no_4'] = df['area_4'].map(class_mapping)
+        df['area_no_5'] = df['area_5'].map(class_mapping)
+        df['area_no_6'] = df['area_6'].map(class_mapping)
         df.to_csv(f'D:/BoatRace/racelists/racelists_2020/racelists_{date}.csv', index=False, encoding='cp932')
         return df
     else:
         return None
 
-start_date = date(2020, 1, 3)
-end_date = date(2020, 1, 3)
+start_date = date(2020, 1, 5)
+end_date = date(2020, 1, 5)
 
 # date_range 関数を使用して日付を生成
 for d in date_range(start_date, end_date):
