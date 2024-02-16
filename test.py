@@ -73,7 +73,7 @@ def get_results(date):
     conv_racetime = lambda x: np.nan if x == '.' else\
         sum([w * float(v) for w, v in zip((60, 1, 1/10), x.split('.'))])
     info_cols = ['title', 'day', 'date', 'place_cd', 'place']
-    race_cols = ['race_no', 'race_type', 'distance']
+    race_cols = ['race_no', 'race_type', 'distance', 'weather', 'wind', 'wind_strength', 'wave']
     keys = ['toban', 'name', 'moter_no', 'boat_no',
             'ET', 'SC', 'ST', 'RT', 'position']
     racer_cols = [f'{k}_{i}' for k in keys for i in range(1, 7)]
@@ -111,6 +111,22 @@ def get_results(date):
                 race_type = lines[head].split()[1]
                 distance = int(re.findall('H(\d*)m', lines[head])[0])
                 win_method = lines[head + 1].split()[-1]
+                if "進入固定" in lines[head]:
+                    weather = lines[head].split()[4]
+                else:
+                    weather = lines[head].split()[3]
+                if "進入固定" in lines[head]:
+                    wind = lines[head].split()[6]
+                else:
+                    wind = lines[head].split()[5]
+                if "進入固定" in lines[head]:
+                    wind_strength = lines[head].split()[7]
+                else:
+                    wind_strength = lines[head].split()[6]
+                if "進入固定" in lines[head]:
+                    wave = lines[head].split()[9]
+                else:
+                    wave = lines[head].split()[8]
                 _, tkt_1t, pb_1t = lines[head + 10].split()
                 _, tkt_1f1, pb_1f1, tkt_1f2, pb_1f2 = lines[head + 11].split()
                 _, tkt_2t, pb_2t, _, pr_2t = lines[head + 12].split()
@@ -120,7 +136,7 @@ def get_results(date):
                 tkt_w3, pb_w3, _, pr_w3 = lines[head + 16].split()
                 _, tkt_3t, pb_3t, _, pr_3t = lines[head + 17].split()
                 _, tkt_3f, pb_3f, _, pr_3f = lines[head + 18].split()
-                race_vals = [race_no, race_type, distance]
+                race_vals = [race_no, race_type, distance, weather, wind, wind_strength, wave]
                 res_vals = [
                     tkt_1t, tkt_1f1, tkt_1f2, tkt_2t, tkt_2f,
                     tkt_w1, tkt_w2, tkt_w3, tkt_3t, tkt_3f,
@@ -160,6 +176,17 @@ def get_results(date):
         df['win_method_差し'] = df['win_method'].apply(lambda x: 1 if x == '差し' else 0)
         df['win_method_抜き'] = df['win_method'].apply(lambda x: 1 if x == '抜き' else 0)
         df['win_method_恵まれ'] = df['win_method'].apply(lambda x: 1 if x == '恵まれ' else 0)
+        df['weather_晴'] = df['weather'].apply(lambda x: 1 if x == '晴' else 0)
+        df['weather_曇り'] = df['weather'].apply(lambda x: 1 if x == '曇り' else 0)
+        df['weather_雨'] = df['weather'].apply(lambda x: 1 if x == '雨' else 0)
+        df['wind_東'] = df['wind'].apply(lambda x: 1 if x == '東' else 0)
+        df['wind_西'] = df['wind'].apply(lambda x: 1 if x == '西' else 0)
+        df['wind_南'] = df['wind'].apply(lambda x: 1 if x == '南' else 0)
+        df['wind_北'] = df['wind'].apply(lambda x: 1 if x == '北' else 0)
+        df['wind_南東'] = df['wind'].apply(lambda x: 1 if x == '南東' else 0)
+        df['wind_南西'] = df['wind'].apply(lambda x: 1 if x == '南西' else 0)
+        df['wind_北西'] = df['wind'].apply(lambda x: 1 if x == '北西' else 0)
+        df['wind_北東'] = df['wind'].apply(lambda x: 1 if x == '北東' else 0)
         repl_mapper = {'K': np.nan, '.': np.nan}
         for i in range(1, 7):
             df[f'ET_{i}'] = df[f'ET_{i}'].replace(repl_mapper)
@@ -177,8 +204,8 @@ def get_results(date):
 
 
 # 開始日と終了日を指定
-start_date = date(2020, 1, 11)
-end_date = date(2020, 1, 11)
+start_date = date(2020, 1, 15)
+end_date = date(2020, 1, 15)
 
 # date_range 関数を使用して日付を生成
 for d in date_range(start_date, end_date):
