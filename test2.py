@@ -24,20 +24,20 @@ def download_file(obj, date):
     date = str(pd.to_datetime(date).date())
     ymd = date.replace('-', '')
     S, s = ('K', 'k') if obj == 'results' else ('B', 'b')
-    if os.path.exists(f'downloads/{obj}/{ymd}.txt'):
+    if os.path.exists(f'D:/BoatRace/racelist_txt/{obj}/{ymd}.txt'):
         return
     else:
-        os.makedirs(f'downloads/{obj}', exist_ok=True)
+        os.makedirs(f'D:/BoatRace/racelist_txt/{obj}', exist_ok=True)
         try:
             url_t = f'http://www1.mbrace.or.jp/od2/{S}/'
             url_b = f'{ymd[:-2]}/{s}{ymd[2:]}.lzh'
-            wget.download(url_t + url_b, f'downloads/{obj}/{ymd}.lzh')
-            archive = LhaFile(f'downloads/{obj}/{ymd}.lzh')
+            wget.download(url_t + url_b, f'D:/BoatRace/racelist_txt/{obj}/{ymd}.lzh')
+            archive = LhaFile(f'D:/BoatRace/racelist_txt/{obj}/{ymd}.lzh')
             d = archive.read(archive.infolist()[0].filename)
-            with open(f'downloads/{obj}/{ymd}.txt', 'wb') as file:
+            with open(f'D:/BoatRace/racelist_txt/{obj}/{ymd}.txt', 'wb') as file:
                 file.write(d)
             archive = None
-            os.remove(f'downloads/{obj}/{ymd}.lzh')
+            os.remove(f'D:/BoatRace/racelist_txt/{obj}/{ymd}.lzh')
         except urllib.request.HTTPError:
             print(f'There are no data for {date}')
 
@@ -47,7 +47,7 @@ def read_file(obj, date):
     """
     date = str(pd.to_datetime(date).date())
     ymd = date.replace('-', '')
-    f = open(f'downloads/{obj}/{ymd}.txt', 'r', encoding='cp932')
+    f = open(f'D:/BoatRace/racelist_txt/{obj}/{ymd}.txt', 'r', encoding='cp932')
     Lines = [l.strip().replace('\u3000', '') for l in f]
     Lines = [mojimoji.zen_to_han(l, kana=False) for l in Lines][1:-1]
     lines_by_plc = {}
@@ -141,13 +141,13 @@ def get_racelists(date):
         df['area_no_4'] = df['area_4'].map(class_mapping)
         df['area_no_5'] = df['area_5'].map(class_mapping)
         df['area_no_6'] = df['area_6'].map(class_mapping)
-        df.to_csv(f'D:/BoatRace/racelists/racelists_2020/racelists_{date}.csv', index=False, encoding='cp932')
+        df.to_csv(f'D:/BoatRace/racelist/racelist_2022/racelist_{date}.csv', index=False, encoding='cp932')
         return df
     else:
         return None
 
-start_date = date(2020, 1, 5)
-end_date = date(2020, 1, 5)
+start_date = date(2022, 1, 1)
+end_date = date(2022, 12, 31)
 
 # date_range 関数を使用して日付を生成
 for d in date_range(start_date, end_date):
