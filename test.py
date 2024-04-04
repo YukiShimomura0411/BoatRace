@@ -25,20 +25,20 @@ def download_file(obj, date):
     date = str(pd.to_datetime(date).date())
     ymd = date.replace('-', '')
     S, s = ('K', 'k') if obj == 'results' else ('B', 'b')
-    if os.path.exists(f'downloads/{obj}/{ymd}.txt'):
+    if os.path.exists(f'D:/BoatRace/result_txt/{obj}/{ymd}.txt'):
         return
     else:
-        os.makedirs(f'downloads/{obj}', exist_ok=True)
+        os.makedirs(f'D:/BoatRace/result_txt/{obj}', exist_ok=True)
         try:
             url_t = f'http://www1.mbrace.or.jp/od2/{S}/'
             url_b = f'{ymd[:-2]}/{s}{ymd[2:]}.lzh'
-            wget.download(url_t + url_b, f'downloads/{obj}/{ymd}.lzh')
-            archive = LhaFile(f'downloads/{obj}/{ymd}.lzh')
+            wget.download(url_t + url_b, f'D:/BoatRace/result_txt/{obj}/{ymd}.lzh')
+            archive = LhaFile(f'D:/BoatRace/result_txt/{obj}/{ymd}.lzh')
             d = archive.read(archive.infolist()[0].filename)
-            with open(f'downloads/{obj}/{ymd}.txt', 'wb') as file:
+            with open(f'D:/BoatRace/result_txt/{obj}/{ymd}.txt', 'wb') as file:
                 file.write(d)
             archive = None
-            os.remove(f'downloads/{obj}/{ymd}.lzh')
+            os.remove(f'D:/BoatRace/result_txt/{obj}/{ymd}.lzh')
         except urllib.request.HTTPError:
             print(f'There are no data for {date}')
 
@@ -48,7 +48,7 @@ def read_file(obj, date):
     """
     date = str(pd.to_datetime(date).date())
     ymd = date.replace('-', '')
-    f = open(f'downloads/{obj}/{ymd}.txt', 'r', encoding='cp932')
+    f = open(f'D:/BoatRace/result_txt/{obj}/{ymd}.txt', 'r', encoding='cp932')
     Lines = [l.strip().replace('\u3000', '') for l in f]
     Lines = [mojimoji.zen_to_han(l, kana=False) for l in Lines][1:-1]
     lines_by_plc = {}
@@ -197,15 +197,15 @@ def get_results(date):
             [f'SC_{i}' for i in range(1, 7)]].values])
         df['wakunari'] = np.where(waku == '123456', 1, 0)
         df = df.replace({'K': np.nan})
-        df.to_csv(f'D:/BoatRace/results/results_2020/results_{date}.csv', index=False, encoding='cp932')
+        df.to_csv(f'D:/BoatRace/result/result_2023/result_{date}.csv', index=False, encoding='cp932')
         return df
     else:
         return None
 
 
 # 開始日と終了日を指定
-start_date = date(2020, 1, 15)
-end_date = date(2020, 1, 15)
+start_date = date(2020, 1, 19)
+end_date = date(2020, 1, 19)
 
 # date_range 関数を使用して日付を生成
 for d in date_range(start_date, end_date):
